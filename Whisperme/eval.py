@@ -9,6 +9,8 @@ import os
 import pyaudio
 import webrtcvad
 import keyboard
+from transformers import pipeline
+
 from ThreadManager import ThreadManager
 import logging
 
@@ -25,7 +27,7 @@ class Transcriber(object):
                  model_size: str = path,
                  device: str = "cuda",
                  compute_type: str = "float16",
-                 prompt: str = '实语音服务已开启'
+                 prompt: str = None,
                  ) -> None:
         """ FasterWhisper 语音转写
 
@@ -41,6 +43,9 @@ class Transcriber(object):
         self.device = device
         self.compute_type = compute_type
         self.prompt = prompt
+
+        # self.trans= pipeline("translation_en_to_zh", model="model/opus_zh")
+        # self.classifier= pipeline("text-classification", model='model/bert_emotion', top_k=1)
 
     def __enter__(self) -> 'Transcriber':
 
@@ -61,13 +66,17 @@ class Transcriber(object):
 
         if info.language != "zh":
             return {"error": "transcribe Chinese only"}
-        res_all = ""
+
         for segment in segments:
             t = segment.text
-            print(t)
-            if res_all.strip().replace('.', ''):
-                yield t
-                print(t)
+            yield t
+            # print(t)
+            # if t.strip():
+            #     yield t
+                # print(t)
+            # translated_data = self.trans(t)[0]['translation_text']
+            # #prediction = self.classifier(translated_data, )
+            # print(prediction[0])
 
 
 class AudioRecorder(object):
@@ -148,17 +157,22 @@ class AudioRecorder(object):
                 break
 
 class SpeechThread(threading.Thread):
-    def __init__(self,transcriber,audio_recorder ):
+    def __init__(self,transcriber,audio_recorder,transen,classifier):
         threading.Thread.__init__(self)
         self.transcriber = transcriber
-        self.audio_recorder  = audio_recorder
+        self.audio_recorder = audio_recorder
+        self.transen = transen
+        self.classifier =classifier
     def run(self):
         try:
-            with self.audio_recorder  as recorder:
-                with self.transcriber  as transcriber:
+            with self.audio_recorder as recorder:
+                with self.transcriber as transcriber:
                     for audio in recorder:
                         for seg in transcriber(audio):
                             # logging.info(seg)
+                            print(seg)
+                            prediction=self.classifier(self.transen(seg)[0]['translation_text'], )
+                            print(prediction)
                             if keyboard.is_pressed('s'):
                                 break
         except KeyboardInterrupt:
@@ -175,7 +189,7 @@ if __name__ == '__main__':
     try:
         # 实例化 ThreadManager
         audio_recorder = AudioRecorder(channels=1, sample_rate=16000)
-        transcriber = Transcriber(model_size="largev3/")
+        transcriber = Transcriber(model_size="model/largev3/")
 
         speech_thread = SpeechThread(transcriber, audio_recorder)
 

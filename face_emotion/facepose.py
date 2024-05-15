@@ -29,7 +29,7 @@ face_mesh = mpFaceMesh.FaceMesh(static_image_mode=False,
                                  min_detection_confidence=0.5,
                                  min_tracking_confidence=0.5)
 
-# 获取屏幕的宽度和高度
+
 class MediapipeThread(threading.Thread):
     def __init__(self,face_mesh):
         super().__init__()

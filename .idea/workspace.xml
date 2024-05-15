@@ -4,7 +4,12 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="3bc72d97-b703-41d9-9fe7-a26065fce745" name="Changes" comment="Initial commit" />
+    <list default="true" id="3bc72d97-b703-41d9-9fe7-a26065fce745" name="Changes" comment="Initial commit">
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Main.py" beforeDir="false" afterPath="$PROJECT_DIR$/Main.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Whisperme/__init__.py" beforeDir="false" afterPath="$PROJECT_DIR$/Whisperme/__init__.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Whisperme/eval.py" beforeDir="false" afterPath="$PROJECT_DIR$/Whisperme/eval.py" afterDir="false" />
+    </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
@@ -254,7 +259,9 @@
       <workItem from="1715680733537" duration="6026000" />
       <workItem from="1715741063298" duration="431000" />
       <workItem from="1715741501132" duration="3780000" />
-      <workItem from="1715753633723" duration="323000" />
+      <workItem from="1715753633723" duration="2543000" />
+      <workItem from="1715822422290" duration="15014000" />
+      <workItem from="1716168015722" duration="362000" />
     </task>
     <task id="LOCAL-00001" summary="Initial commit">
       <option name="closed" value="true" />
@@ -344,7 +351,23 @@
       <option name="project" value="LOCAL" />
       <updated>1715753719296</updated>
     </task>
-    <option name="localTasksCounter" value="12" />
+    <task id="LOCAL-00012" summary="Initial commit">
+      <option name="closed" value="true" />
+      <created>1715754087616</created>
+      <option name="number" value="00012" />
+      <option name="presentableId" value="LOCAL-00012" />
+      <option name="project" value="LOCAL" />
+      <updated>1715754087616</updated>
+    </task>
+    <task id="LOCAL-00013" summary="Initial commit">
+      <option name="closed" value="true" />
+      <created>1715757083515</created>
+      <option name="number" value="00013" />
+      <option name="presentableId" value="LOCAL-00013" />
+      <option name="project" value="LOCAL" />
+      <updated>1715757083515</updated>
+    </task>
+    <option name="localTasksCounter" value="14" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -369,8 +392,8 @@
     <SUITE FILE_PATH="coverage/metaall$test.coverage" NAME="test Coverage Results" MODIFIED="1715593395140" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/Whisper" />
     <SUITE FILE_PATH="coverage/metaall$facepose.coverage" NAME="facepose Coverage Results" MODIFIED="1715681217065" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/face_emotion" />
     <SUITE FILE_PATH="coverage/fasterwhisper$faster_whisper.coverage" NAME="faster_whisper Coverage Results" MODIFIED="1715567359289" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/Whisper" />
-    <SUITE FILE_PATH="coverage/metaall$eval__1_.coverage" NAME="eval (1) Coverage Results" MODIFIED="1715738214519" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/Whisperme" />
-    <SUITE FILE_PATH="coverage/metaall$Main.coverage" NAME="Main Coverage Results" MODIFIED="1715753065161" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
+    <SUITE FILE_PATH="coverage/metaall$eval__1_.coverage" NAME="eval (1) Coverage Results" MODIFIED="1715921848536" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/Whisperme" />
+    <SUITE FILE_PATH="coverage/metaall$Main.coverage" NAME="Main Coverage Results" MODIFIED="1715935139762" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
     <SUITE FILE_PATH="coverage/fasterwhisper$eval__1_.coverage" NAME="eval (1) Coverage Results" MODIFIED="1715570137667" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/Whisper" />
     <SUITE FILE_PATH="coverage/metaall$ThreadManager.coverage" NAME="ThreadManager Coverage Results" MODIFIED="1715680136940" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
     <SUITE FILE_PATH="coverage/fasterwhisper$main.coverage" NAME="main Coverage Results" MODIFIED="1715331338059" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/pythonProject" />

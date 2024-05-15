@@ -1,4 +1,7 @@
 import logging
+
+from transformers import pipeline
+
 from Whisperme import SpeechThread, AudioRecorder, Transcriber
 from ThreadManager import ThreadManager
 import keyboard
@@ -13,9 +16,10 @@ from face_emotion import MediapipeThread
 if __name__ == '__main__':
     try:
         audio_recorder = AudioRecorder(channels=1, sample_rate=16000)
-        transcriber = Transcriber(model_size="Whisperme/largev3/")
-
-        speech_thread = SpeechThread(transcriber, audio_recorder)
+        transcriber = Transcriber(model_size="Whisperme/model/largev3/")
+        translator = pipeline("translation_en_to_zh", model="Whisperme/model/opus_zh")
+        classifier = pipeline("text-classification", model='Whisperme/model/bert_emotion', top_k=0)
+        speech_thread = SpeechThread(transcriber, audio_recorder,translator,classifier)
 
         manager0 = ThreadManager(function=speech_thread)
 
