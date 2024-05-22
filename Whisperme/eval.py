@@ -11,6 +11,7 @@ import webrtcvad
 import keyboard
 from transformers import pipeline
 
+from Llm import chatspeak
 from ThreadManager import ThreadManager
 import logging
 
@@ -66,7 +67,6 @@ class Transcriber(object):
 
         if info.language != "zh":
             return {"error": "transcribe Chinese only"}
-
         for segment in segments:
             t = segment.text
             yield t
@@ -100,11 +100,9 @@ class AudioRecorder(object):
         self.__frames: typing.List[bytes] = []
 
     def __enter__(self) -> 'AudioRecorder':
-
         self.vad = webrtcvad.Vad()
         # 设置 VAD 的敏感度。参数是一个 0 到 3 之间的整数。0 表示对非语音最不敏感，3 最敏感。
         self.vad.set_mode(1)
-
         self.audio = pyaudio.PyAudio()
         self.sample_width = self.audio.get_sample_size(pyaudio.paInt16)
         self.stream = self.audio.open(format=pyaudio.paInt16,
@@ -157,12 +155,15 @@ class AudioRecorder(object):
                 break
 
 class SpeechThread(threading.Thread):
-    def __init__(self,transcriber,audio_recorder,transen,classifier):
+    def __init__(self,transcriber,audio_recorder,transen,classifier,canchat):
         threading.Thread.__init__(self)
         self.transcriber = transcriber
         self.audio_recorder = audio_recorder
         self.transen = transen
         self.classifier =classifier
+        self.canchat=canchat
+    def get_current_seg(self):
+        return self.current_seg  # 获取当前的 seg 值
     def run(self):
         try:
             with self.audio_recorder as recorder:
@@ -171,17 +172,19 @@ class SpeechThread(threading.Thread):
                         for seg in transcriber(audio):
                             # logging.info(seg)
                             print(seg)
-                            prediction=self.classifier(self.transen(seg)[0]['translation_text'], )
-                            print(prediction)
+                            # prediction=self.classifier(self.transen(seg)[0]['translation_text'], )
+                            # print(prediction)
+
+
+                            if seg is not None and self.canchat:
+                                chatspeak(seg,model="E:/Python_Pro/metaall/Llm/llama",file="E:/Python_Pro/metaall/Llm/temp_audio.mp3")
+
                             if keyboard.is_pressed('s'):
                                 break
         except KeyboardInterrupt:
             print("键盘中断：终止程序...")
         except Exception as e:
             logging.error(e, exc_info=True, stack_info=True)
-
-
-
 
 # 这里添加 SpeechThread 和 ThreadManager 的定义代码
 
@@ -190,15 +193,9 @@ if __name__ == '__main__':
         # 实例化 ThreadManager
         audio_recorder = AudioRecorder(channels=1, sample_rate=16000)
         transcriber = Transcriber(model_size="model/largev3/")
-
         speech_thread = SpeechThread(transcriber, audio_recorder)
-
         manager = ThreadManager(function=speech_thread)
-
         # 启动线程
         manager.control_thread(True)
-
-
-
     except Exception as e:
         logging.error(e, exc_info=True)
