@@ -16,13 +16,10 @@ if __name__ == '__main__':
     try:
         audio_recorder = AudioRecorder(channels=1, sample_rate=16000)
         transcriber = Transcriber(model_size="Whisperme/model/largev3/")
-        translator = pipeline("translation_en_to_zh", model="Whisperme/model/opus_zh")
         classifier = pipeline("text-classification", model='Whisperme/model/bert_emotion', top_k=0)
-        speech_thread = SpeechThread(transcriber, audio_recorder,translator,classifier,True)
-
+        speech_thread = SpeechThread(transcriber, audio_recorder,classifier,True)
         # if message is not None:
         #     chatspeak(message,model="Llm/model/llama/",file="Llm/temp_audio.mp3")
-
         manager0 = ThreadManager(function=speech_thread)
 
         # 启动线程

@@ -5,28 +5,14 @@
       <paths name="ZK_zhangzijing@172.26.224.11:22 password">
         <serverdata>
           <mappings>
-            <mapping local="$PROJECT_DIR$" web="/" />
+            <mapping deploy="/data/ZK_zhangzijing/gnij/pyhtonproject" local="$PROJECT_DIR$" web="/" />
           </mappings>
         </serverdata>
       </paths>
-      <paths name="ZK_zhangzijing@172.26.224.11:22 password (2)">
+      <paths name="yk">
         <serverdata>
           <mappings>
-            <mapping local="$PROJECT_DIR$" web="/" />
-          </mappings>
-        </serverdata>
-      </paths>
-      <paths name="ZK_zhangzijing@172.26.224.11:22 password (3)">
-        <serverdata>
-          <mappings>
-            <mapping local="$PROJECT_DIR$" web="/" />
-          </mappings>
-        </serverdata>
-      </paths>
-      <paths name="ZK_zhangzijing@172.26.224.11:22 password (4)">
-        <serverdata>
-          <mappings>
-            <mapping local="$PROJECT_DIR$" web="/" />
+            <mapping deploy="/data/yk/pythonproject" local="$PROJECT_DIR$" web="/" />
           </mappings>
         </serverdata>
       </paths>

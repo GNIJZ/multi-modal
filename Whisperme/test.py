@@ -43,8 +43,7 @@ class Transcriber(object):
         self.device = device
         self.compute_type = compute_type
         self.prompt = prompt
-        # self.trans= pipeline("translation_en_to_zh", model="model/opus_zh")
-        # self.classifier= pipeline("text-classification", model='model/bert_emotion', top_k=1)
+
     def __enter__(self) -> 'Transcriber':
 
         self._model = WhisperModel(model_size_or_path=self.model_size,
@@ -52,9 +51,11 @@ class Transcriber(object):
                                    compute_type=self.compute_type,
                                    local_files_only=True)
         return self
+
     def __exit__(self, exc_type, exc_value, traceback) -> None:
         pass
-    def __call__(self, audio: bytes) -> typing.Generator[str, None, None]:
+
+    def transcribe_audio(self, audio: bytes) -> typing.Generator[str, None, None]:
         segments, info = self._model.transcribe(audio=BytesIO(audio),
                                                 initial_prompt=self.prompt,
                                                 language="zh", vad_filter=True
@@ -62,22 +63,16 @@ class Transcriber(object):
         if info.language != "zh":
             return {"error": "transcribe Chinese only"}
         for segment in segments:
-            t = segment.text
-            yield t
-            # print(t)
-            # if t.strip():
-            #     yield t
-                # print(t)
-            # translated_data = self.trans(t)[0]['translation_text']
-            # #prediction = self.classifier(translated_data, )
-            # print(prediction[0])
+            yield segment.text
+
+
 class AudioRecorder(object):
     """ Audio recorder.
     Args:
-        channels (int, 可选): 通道数，默认为1（单声道）。
-        rate (int, 可选): 采样率，默认为16000 Hz。
-        chunk (int, 可选): 缓冲区中的帧数，默认为256。
-        frame_duration (int, 可选): 每帧的持续时间（单位：毫秒），默认为30。
+        channels (int, optional): 通道数，默认为1（单声道）。
+        sample_rate (int, optional): 采样率，默认为16000 Hz。
+        chunk (int, optional): 缓冲区中的帧数，默认为256。
+        frame_duration (int, optional): 每帧的持续时间（单位：毫秒），默认为30。
     """
     def __init__(self,
                  channels: int = 1,
@@ -87,96 +82,84 @@ class AudioRecorder(object):
         self.sample_rate = sample_rate
         self.channels = channels
         self.chunk = chunk
-        self.frame_size = (sample_rate * frame_duration // 1000)
-        self.__frames: typing.List[bytes] = []
+        self.frame_size = sample_rate * frame_duration // 1000
+        self.audio_data = io.BytesIO()
+
     def __enter__(self) -> 'AudioRecorder':
         self.vad = webrtcvad.Vad()
-        # 设置 VAD 的敏感度。参数是一个 0 到 3 之间的整数。0 表示对非语音最不敏感，3 最敏感。
         self.vad.set_mode(1)
         self.audio = pyaudio.PyAudio()
-        self.sample_width = self.audio.get_sample_size(pyaudio.paInt16)
         self.stream = self.audio.open(format=pyaudio.paInt16,
                                       channels=self.channels,
                                       rate=self.sample_rate,
                                       input=True,
                                       frames_per_buffer=self.chunk)
         return self
+
     def __exit__(self, exc_type, exc_value, traceback) -> None:
         self.stream.stop_stream()
         self.stream.close()
         self.audio.terminate()
-    def __bytes__(self) -> bytes:
-        buf = io.BytesIO()
-        with wave.open(buf, 'wb') as wf:
-            wf.setnchannels(self.channels)
-            wf.setsampwidth(self.sample_width)
-            wf.setframerate(self.sample_rate)
-            wf.writeframes(b''.join(self.__frames))
-            self.__frames.clear()
-        return buf.getvalue()
-    def __iter__(self):
-        """ Record audio until silence is detected.
-        """
+
+    def record_audio(self) -> typing.Generator[bytes, None, None]:
         MAXLEN = 30
         watcher = collections.deque(maxlen=MAXLEN)
         triggered, ratio = False, 0.5
+
         while True:
-            frame = self.stream.read(self.frame_size)
+            frame = self.stream.read(self.chunk)
             is_speech = self.vad.is_speech(frame, self.sample_rate)
             watcher.append(is_speech)
-            self.__frames.append(frame)
+            self.audio_data.write(frame)
+
             if not triggered:
-                num_voiced = len([x for x in watcher if x])
+                num_voiced = sum(watcher)
                 if num_voiced > ratio * watcher.maxlen:
-                    # logging.info("start recording...")
                     triggered = True
                     watcher.clear()
-                    self.__frames = self.__frames[-MAXLEN:]
             else:
-                num_unvoiced = len([x for x in watcher if not x])
+                num_unvoiced = len(watcher) - sum(watcher)
                 if num_unvoiced > ratio * watcher.maxlen:
-                    # logging.info("stop recording...")
                     triggered = False
-                    yield bytes(self)
+                    yield self.audio_data.getvalue()
+                    self.audio_data.seek(0)
+                    self.audio_data.truncate()
+
             if keyboard.is_pressed('s'):
                 break
 
 class SpeechThread(threading.Thread):
-    def __init__(self,transcriber,audio_recorder,canchat):
+    def __init__(self, transcriber, audio_recorder, canchat):
         threading.Thread.__init__(self)
         self.transcriber = transcriber
         self.audio_recorder = audio_recorder
-        self.canchat=canchat
-    def get_current_seg(self):
-        return self.current_seg  # 获取当前的 seg 值
+        self.canchat = canchat
+
     def run(self):
         try:
             with self.audio_recorder as recorder:
                 with self.transcriber as transcriber:
-                    for audio in recorder:
-                        for seg in transcriber(audio):
-                            # logging.info(seg)
-                            print(seg)
-                            # prediction=self.classifier(self.transen(seg)[0]['translation_text'], )
-                            # print(prediction)
-                            if seg is not None and self.canchat:
-                                chatspeak(seg,model="E:\Python_Pro\metaall\llama_ch",file="E:/Python_Pro/metaall/Llm/temp_audio.mp3")
-                                seg=None
+                    for audio in recorder.record_audio():
+                        for seg in transcriber.transcribe_audio(audio):
+                            print("User: ", seg)
+                            if self.canchat:
+                                response = chatspeak(seg, model="E:\Python_Pro\metaall\llama_ch",
+                                                     file="E:/Python_Pro/metaall/Llm/temp_audio.mp3")
+                                print("AI: ", response)
                             if keyboard.is_pressed('s'):
                                 break
         except KeyboardInterrupt:
             print("键盘中断：终止程序...")
         except Exception as e:
             logging.error(e, exc_info=True, stack_info=True)
-# 这里添加 SpeechThread 和 ThreadManager 的定义代码
+
+
 if __name__ == '__main__':
     try:
-        # 实例化 ThreadManager
         audio_recorder = AudioRecorder(channels=1, sample_rate=16000)
         transcriber = Transcriber(model_size="model/largev3/")
         speech_thread = SpeechThread(transcriber, audio_recorder,True)
         manager = ThreadManager(function=speech_thread)
-        # 启动线程
         manager.control_thread(True)
     except Exception as e:
         logging.error(e, exc_info=True)

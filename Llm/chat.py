@@ -9,7 +9,7 @@ from pydub.playback import play
 
 # 设置模型和消息
 def chatspeak(message):
-    model_id = "llama"
+    model_id = "E:\Python_Pro\metaall\llama_ch"
     message=message
     messages = [
         {"role": "user", "content": message},
@@ -34,19 +34,17 @@ def chatspeak(message):
         temperature=0.6,
         top_p=0.9,
     )
-
     # 提取生成的文本
     generated_text = outputs[0]["generated_text"]
     print(generated_text)
     conversation_lines = generated_text.strip().split("\n")
-
     # 提取最后一句话
     last_sentence = conversation_lines[-1]
 
     if last_sentence is not None:
 
         # 使用 gtts 生成语音
-        tts = gTTS(text=last_sentence, lang='en')
+        tts = gTTS(text=last_sentence, lang='zh')
 
         # 将语音保存到临时文件中
         temp_file_path = "temp_audio.mp3"
@@ -55,3 +53,5 @@ def chatspeak(message):
         # 播放生成的语音
         audio = AudioSegment.from_file(temp_file_path, format="mp3")
         play(audio)
+if __name__ == '__main__':
+    chatspeak("你好")
