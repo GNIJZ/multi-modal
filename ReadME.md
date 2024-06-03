@@ -10,3 +10,13 @@
 
 tips：
 语音本文采用largev3，自行到huggingface下载https://huggingface.co/openai/whisper-large-v3
+
+llama的中文大模型地址https://huggingface.co/hfl/llama-3-chinese-8b-instruct-v2/tree/main
+
+
+
+
+
+--------------------------------------------------
+后续加入面部的情绪识别、制作动态链接，使用c++作为程序后端
+
